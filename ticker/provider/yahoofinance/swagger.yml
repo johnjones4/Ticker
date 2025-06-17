@@ -1,0 +1,140 @@
+openapi: 3.0.3
+info:
+  title: Yahoo Finance Chart API (Unofficial)
+  version: 1.0.0
+  description: |
+    Unofficial specification for the Yahoo Finance Chart endpoint, returning intraday chart data for financial instruments such as the S&P 500 (^GSPC).
+
+servers:
+  - url: https://query1.finance.yahoo.com
+
+paths:
+  /v8/finance/chart/{symbol}:
+    get:
+      summary: Get intraday chart data for a financial symbol
+      parameters:
+        - in: path
+          name: symbol
+          required: true
+          schema:
+            type: string
+          example: ^GSPC
+          description: The ticker symbol (e.g., ^GSPC for S&P 500, SPY for the ETF).
+        - in: query
+          name: range
+          required: true
+          schema:
+            type: string
+            enum: [1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max]
+          example: 1d
+          description: Time range of the chart data.
+        - in: query
+          name: interval
+          required: true
+          schema:
+            type: string
+            enum: [1m, 2m, 5m, 15m, 30m, 60m, 90m, 1d, 5d, 1wk, 1mo, 3mo]
+          example: 1m
+          description: Data granularity of chart intervals.
+      responses:
+        '200':
+          description: Successful response with chart data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chart:
+                    type: object
+                    properties:
+                      result:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            meta:
+                              type: object
+                              properties:
+                                currency: { type: string }
+                                symbol: { type: string }
+                                exchangeName: { type: string }
+                                fullExchangeName: { type: string }
+                                instrumentType: { type: string }
+                                firstTradeDate: { type: integer }
+                                regularMarketTime: { type: integer }
+                                hasPrePostMarketData: { type: boolean }
+                                gmtoffset: { type: integer }
+                                timezone: { type: string }
+                                exchangeTimezoneName: { type: string }
+                                regularMarketPrice: { type: number }
+                                fiftyTwoWeekHigh: { type: number }
+                                fiftyTwoWeekLow: { type: number }
+                                regularMarketDayHigh: { type: number }
+                                regularMarketDayLow: { type: number }
+                                regularMarketVolume: { type: integer }
+                                longName: { type: string }
+                                shortName: { type: string }
+                                chartPreviousClose: { type: number }
+                                previousClose: { type: number }
+                                scale: { type: integer }
+                                priceHint: { type: integer }
+                                currentTradingPeriod:
+                                  type: object
+                                  properties:
+                                    pre:
+                                      $ref: '#/components/schemas/TradingPeriod'
+                                    regular:
+                                      $ref: '#/components/schemas/TradingPeriod'
+                                    post:
+                                      $ref: '#/components/schemas/TradingPeriod'
+                                tradingPeriods:
+                                  type: array
+                                  items:
+                                    type: array
+                                    items:
+                                      $ref: '#/components/schemas/TradingPeriod'
+                                dataGranularity: { type: string }
+                                range: { type: string }
+                                validRanges:
+                                  type: array
+                                  items: { type: string }
+                            timestamp:
+                              type: array
+                              items: { type: integer }
+                            indicators:
+                              type: object
+                              properties:
+                                quote:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      open:
+                                        type: array
+                                        items: { type: number, nullable: true }
+                                      high:
+                                        type: array
+                                        items: { type: number, nullable: true }
+                                      low:
+                                        type: array
+                                        items: { type: number, nullable: true }
+                                      close:
+                                        type: array
+                                        items: { type: number, nullable: true }
+                                      volume:
+                                        type: array
+                                        items: { type: integer, nullable: true }
+                      error:
+                        nullable: true
+                        type: object
+                        description: Null if no error
+
+components:
+  schemas:
+    TradingPeriod:
+      type: object
+      properties:
+        timezone: { type: string }
+        start: { type: integer }
+        end: { type: integer }
+        gmtoffset: { type: integer }
