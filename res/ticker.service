@@ -1,0 +1,13 @@
+[Unit]
+Description=Ticker Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/ticker
+EnvironmentFile=/etc/default/ticker
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
