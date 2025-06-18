@@ -72,7 +72,7 @@ func (r *Runtime) Start(ctx context.Context) error {
 		}
 	}()
 
-	update := time.Tick(time.Second)
+	update := time.Tick(time.Second * 10)
 	allMessages := make(map[string][]string)
 	for {
 		select {
