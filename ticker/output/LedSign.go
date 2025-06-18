@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"main/ticker/core"
 	"strings"
+	"time"
 
 	alphasign "github.com/johnjones4/alpha-sign-communications-protocol"
 )
@@ -46,7 +47,7 @@ func (o *LedSign) Init(ctx context.Context, log *slog.Logger, cfg *core.Configur
 }
 
 func (o *LedSign) Update(ctx context.Context, msgs map[string][]string) error {
-	strs := make([]string, 0, len(msgs))
+	strs := make([]string, 0, len(msgs)+1)
 
 	for label, msgs1 := range msgs {
 		if len(msgs1) == 0 {
@@ -54,6 +55,8 @@ func (o *LedSign) Update(ctx context.Context, msgs map[string][]string) error {
 		}
 		strs = append(strs, fmt.Sprintf("%s: %s", label, strings.Join(msgs1, ", ")))
 	}
+
+	strs = append(strs, fmt.Sprintf("Last Updated: %s", time.Now().Format(time.ANSIC)))
 
 	msg := strings.Join(strs, " | ")
 	o.log.Info("message", slog.Int("size", len([]byte(msg))), slog.String("message", msg))
