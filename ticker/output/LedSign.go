@@ -85,11 +85,11 @@ func (o *LedSign) PrepareSegments(ctx context.Context, segs []string) error {
 }
 
 func (o *LedSign) Update(ctx context.Context, msgs map[string][]string) error {
-	//TODO use ordered segments
 	strs := make([]string, 0, len(msgs))
 
-	for label, msgs1 := range msgs {
-		if len(msgs1) == 0 {
+	for _, label := range o.orderedSegments {
+		msgs1, ok := msgs[label]
+		if !ok || len(msgs1) == 0 {
 			continue
 		}
 		strs = append(strs, fmt.Sprintf("%s: %s", label, strings.Join(msgs1, ", ")))
