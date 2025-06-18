@@ -19,8 +19,8 @@ type LedSign struct {
 }
 
 const (
-	textFileLabel        alphasign.FileLabel = 0x31
-	stringFileLabelStart alphasign.FileLabel = 0x32
+	textFileLabel        alphasign.FileLabel = 'A'
+	stringFileLabelStart alphasign.FileLabel = 0x31
 
 	stringFileWidth = 125
 	nStringFiles    = 4
