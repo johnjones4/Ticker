@@ -16,8 +16,7 @@ type LedSign struct {
 }
 
 var (
-	textFileLabel   alphasign.FileLabel = 'A'
-	stringFileLabel alphasign.FileLabel = '1'
+	textFileLabel alphasign.FileLabel = 'A'
 )
 
 func (o *LedSign) Init(ctx context.Context, log *slog.Logger, cfg *core.Configuration) error {
@@ -34,27 +33,9 @@ func (o *LedSign) Init(ctx context.Context, log *slog.Logger, cfg *core.Configur
 				FileLabel:                textFileLabel,
 				FileType:                 alphasign.TextFile,
 				KeyboardProtectionStatus: 'U',
-				FileSize:                 alphasign.FileSize(128),
-			},
-			alphasign.MemoryConfiguration{
-				FileLabel:                stringFileLabel,
-				FileType:                 alphasign.StringFile,
-				KeyboardProtectionStatus: 'L',
 				FileSize:                 alphasign.FileSize(2048),
 			},
 		},
-	})
-	if err != nil {
-		return err
-	}
-
-	err = sign.Send(alphasign.WriteTextCommand{
-		FileLabel: textFileLabel,
-		Mode: &alphasign.TextMode{
-			DisplayPosition: alphasign.Left,
-			ModeCode:        alphasign.Rotate,
-		},
-		Message: []byte{0x15, 0x1C, 0x31, 0x10, '1'},
 	})
 	if err != nil {
 		return err
@@ -77,8 +58,12 @@ func (o *LedSign) Update(ctx context.Context, msgs map[string][]string) error {
 	msg := strings.Join(strs, " | ")
 	o.log.Info("message", slog.Int("size", len([]byte(msg))), slog.String("message", msg))
 
-	return o.sign.Send(alphasign.WriteStringCommand{
-		FileLabel: stringFileLabel,
-		FileData:  []byte(msg),
+	return o.sign.Send(alphasign.WriteTextCommand{
+		FileLabel: textFileLabel,
+		Mode: &alphasign.TextMode{
+			DisplayPosition: alphasign.Left,
+			ModeCode:        alphasign.Rotate,
+		},
+		Message: append([]byte{0x15, 0x1C, 0x31}, []byte(msg)...),
 	})
 }
