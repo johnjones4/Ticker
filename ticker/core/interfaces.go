@@ -17,5 +17,6 @@ type Provider interface {
 
 type Output interface {
 	Init
+	PrepareSegments(ctx context.Context, segs []string) error
 	Update(ctx context.Context, msgs map[string][]string) error
 }

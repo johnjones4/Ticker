@@ -15,6 +15,10 @@ func (o *LogOutput) Init(ctx context.Context, log *slog.Logger, cfg *core.Config
 	return nil
 }
 
+func (o *LogOutput) PrepareSegments(ctx context.Context, segs []string) error {
+	return nil
+}
+
 func (o *LogOutput) Update(ctx context.Context, msgs map[string][]string) error {
 	for i, msgs1 := range msgs {
 		for _, msg := range msgs1 {

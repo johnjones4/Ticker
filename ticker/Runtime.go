@@ -34,9 +34,11 @@ func (r *Runtime) Init(ctx context.Context) error {
 		r.output = &output.LogOutput{}
 	}
 
+	segments := make([]string, 0, len(r.Providers))
 	inits := make([]core.Init, 0)
 	for _, p := range r.Providers {
 		inits = append(inits, p)
+		segments = append(segments, p.Name())
 	}
 	inits = append(inits, r.output)
 
@@ -45,6 +47,11 @@ func (r *Runtime) Init(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
+	}
+
+	err = r.output.PrepareSegments(ctx, segments)
+	if err != nil {
+		return err
 	}
 
 	return nil
