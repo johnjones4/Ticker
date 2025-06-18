@@ -23,7 +23,7 @@ const (
 	stringFileLabelStart alphasign.FileLabel = 0x32
 
 	stringFileWidth = 125
-	nStringFiles    = 1
+	nStringFiles    = 4
 )
 
 func (o *LedSign) Init(ctx context.Context, log *slog.Logger, cfg *core.Configuration) error {
@@ -110,8 +110,10 @@ func (o *LedSign) Update(ctx context.Context, msgs map[string][]string) error {
 
 	n := 0
 	for chunk := range slices.Chunk([]byte(msg), stringFileWidth) {
+		filename := stringFileLabelStart + alphasign.FileLabel(n)
+		o.log.Info("creating string file", slog.String("filename", fmt.Sprint(filename)))
 		err := o.sign.Send(alphasign.WriteStringCommand{
-			FileLabel: stringFileLabelStart + alphasign.FileLabel(n),
+			FileLabel: filename,
 			FileData:  chunk,
 		})
 		if err != nil {
