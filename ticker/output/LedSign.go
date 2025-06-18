@@ -70,7 +70,7 @@ func (o *LedSign) Init(ctx context.Context, log *slog.Logger, cfg *core.Configur
 			DisplayPosition: alphasign.Left,
 			ModeCode:        alphasign.Rotate,
 		},
-		Message: displayString,
+		Message: []byte("Loading 123 ..."),
 	})
 	if err != nil {
 		return err
