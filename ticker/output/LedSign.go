@@ -111,7 +111,7 @@ func (o *LedSign) Update(ctx context.Context, msgs map[string][]string) error {
 	n := 0
 	for chunk := range slices.Chunk([]byte(msg), stringFileWidth) {
 		filename := stringFileLabelStart + alphasign.FileLabel(n)
-		o.log.Info("creating string file", slog.String("filename", fmt.Sprint(filename)))
+		o.log.Info("updating file", slog.String("filename", fmt.Sprint(filename)), slog.String("text", string(chunk)))
 		err := o.sign.Send(alphasign.WriteStringCommand{
 			FileLabel: filename,
 			FileData:  chunk,
