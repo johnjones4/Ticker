@@ -19,10 +19,10 @@ type LedSign struct {
 }
 
 const (
-	textFileLabel        alphasign.FileLabel = 'A'
-	stringFileLabelStart alphasign.FileLabel = 0x31
+	textFileLabel        alphasign.FileLabel = 0x31
+	stringFileLabelStart alphasign.FileLabel = 0x32
 
-	stringFileWidth = 100
+	stringFileWidth = 125
 	nStringFiles    = 4
 )
 
@@ -42,7 +42,7 @@ func (o *LedSign) Init(ctx context.Context, log *slog.Logger, cfg *core.Configur
 			FileSize:                 alphasign.FileSize(1024),
 		},
 	}
-	displayString := append([]byte{0x15, 0x1C, 0x31}, []byte("messages:")...)
+	displayString := []byte{0x15, 0x1C, 0x31}
 
 	for i := range nStringFiles {
 		filename := stringFileLabelStart + alphasign.FileLabel(i)
