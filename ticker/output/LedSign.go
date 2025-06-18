@@ -42,7 +42,7 @@ func (o *LedSign) Init(ctx context.Context, log *slog.Logger, cfg *core.Configur
 			FileSize:                 alphasign.FileSize(1024),
 		},
 	}
-	displayString := []byte{0x15, 0x1C, 0x31}
+	displayString := append([]byte{0x15, 0x1C, 0x31}, []byte("messages:")...)
 
 	for i := range nStringFiles {
 		filename := stringFileLabelStart + alphasign.FileLabel(i)
