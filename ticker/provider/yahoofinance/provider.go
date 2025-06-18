@@ -3,6 +3,7 @@ package yahoofinance
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"main/ticker/core"
 	"net/http"
 )
@@ -10,9 +11,11 @@ import (
 type YahooFinance struct {
 	symbols []string
 	client  ClientWithResponsesInterface
+	log     *slog.Logger
 }
 
-func (p *YahooFinance) Init(ctx context.Context, cfg *core.Configuration) error {
+func (p *YahooFinance) Init(ctx context.Context, log *slog.Logger, cfg *core.Configuration) error {
+	p.log = log
 	p.symbols = cfg.MarketSymbols
 	var err error
 	p.client, err = NewClientWithResponses("https://query1.finance.yahoo.com", WithRequestEditorFn(func(ctx context.Context, req *http.Request) error {
@@ -27,7 +30,12 @@ func (p *YahooFinance) Init(ctx context.Context, cfg *core.Configuration) error 
 	return nil
 }
 
+func (p *YahooFinance) Name() string {
+	return "Markets"
+}
+
 func (p *YahooFinance) Update(ctx context.Context) ([]string, error) {
+	p.log.Info("Updating Yahoo Finance")
 	out := make([]string, 0, len(p.symbols))
 	for _, symbol := range p.symbols {
 		res, err := p.client.GetV8FinanceChartSymbolWithResponse(ctx, symbol, &GetV8FinanceChartSymbolParams{

@@ -1,17 +1,21 @@
 package core
 
-import "context"
+import (
+	"context"
+	"log/slog"
+)
 
 type Init interface {
-	Init(ctx context.Context, cfg *Configuration) error
+	Init(ctx context.Context, log *slog.Logger, cfg *Configuration) error
 }
 
 type Provider interface {
 	Init
+	Name() string
 	Update(ctx context.Context) ([]string, error)
 }
 
 type Output interface {
 	Init
-	Display(ctx context.Context, msg string) error
+	Update(ctx context.Context, msgs map[string][]string) error
 }

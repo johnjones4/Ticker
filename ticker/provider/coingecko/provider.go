@@ -3,6 +3,7 @@ package coingecko
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"main/ticker/core"
 	"strings"
 )
@@ -12,9 +13,11 @@ type CoinGecko struct {
 	currencyCode string
 	client       ClientWithResponsesInterface
 	coinNameMap  map[string]string
+	log          *slog.Logger
 }
 
-func (p *CoinGecko) Init(ctx context.Context, cfg *core.Configuration) error {
+func (p *CoinGecko) Init(ctx context.Context, log *slog.Logger, cfg *core.Configuration) error {
+	p.log = log
 	p.coins = cfg.CryptoCoins
 	p.currencyCode = cfg.CurrencyCode
 	var err error
@@ -29,7 +32,12 @@ func (p *CoinGecko) Init(ctx context.Context, cfg *core.Configuration) error {
 	return nil
 }
 
+func (p *CoinGecko) Name() string {
+	return "Crypto"
+}
+
 func (p *CoinGecko) Update(ctx context.Context) ([]string, error) {
+	p.log.Info("Updating CoinGecko")
 	out := make([]string, 0, len(p.coins))
 	ids := strings.Join(p.coins, ",")
 	t := true

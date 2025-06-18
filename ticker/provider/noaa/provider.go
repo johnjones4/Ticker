@@ -3,16 +3,19 @@ package noaa
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"main/ticker/core"
 )
 
 type NOAA struct {
 	stationId string
 	client    ClientWithResponsesInterface
+	log       *slog.Logger
 }
 
-func (p *NOAA) Init(ctx context.Context, cfg *core.Configuration) error {
+func (p *NOAA) Init(ctx context.Context, log *slog.Logger, cfg *core.Configuration) error {
 	p.stationId = cfg.NoaaStationId
+	p.log = log
 	var err error
 	p.client, err = NewClientWithResponses("https://api.weather.gov")
 	if err != nil {
@@ -21,7 +24,12 @@ func (p *NOAA) Init(ctx context.Context, cfg *core.Configuration) error {
 	return nil
 }
 
+func (p *NOAA) Name() string {
+	return "Natnl Weather Svc"
+}
+
 func (p *NOAA) Update(ctx context.Context) ([]string, error) {
+	p.log.Info("updating NOAA")
 	res, err := p.client.StationObservationLatestWithResponse(ctx, p.stationId, &StationObservationLatestParams{})
 	if err != nil {
 		return nil, err

@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"log/slog"
 	"time"
 )
 
@@ -11,8 +12,12 @@ type IntervalProvider struct {
 	lastUpdate     time.Time
 }
 
-func (ip *IntervalProvider) Init(ctx context.Context, cfg *Configuration) error {
-	return ip.Parent.Init(ctx, cfg)
+func (ip *IntervalProvider) Init(ctx context.Context, log *slog.Logger, cfg *Configuration) error {
+	return ip.Parent.Init(ctx, log, cfg)
+}
+
+func (ip *IntervalProvider) Name() string {
+	return ip.Parent.Name()
 }
 
 func (ip *IntervalProvider) Update(ctx context.Context) ([]string, error) {

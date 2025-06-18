@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log/slog"
 	"main/ticker"
 	"main/ticker/core"
 	"main/ticker/provider/coingecko"
@@ -12,7 +13,10 @@ import (
 )
 
 func main() {
+	log := slog.Default()
+
 	rt := ticker.Runtime{
+		Log:               log,
 		ConfigurationPath: "./config.json",
 		Providers: []core.Provider{
 			&core.IntervalProvider{
@@ -37,11 +41,13 @@ func main() {
 	ctx := context.Background()
 	err := rt.Init(ctx)
 	if err != nil {
-		panic(err)
+		log.Error("error during init", slog.Any("error", err))
+		return
 	}
 
 	err = rt.Start(ctx)
 	if err != nil {
-		panic(err)
+		log.Error("error during runtime", slog.Any("error", err))
+		return
 	}
 }

@@ -32,6 +32,8 @@ github.com/googleapis/gax-go/v2 v2.14.2 h1:eBLnkZ9635krYIPD+ag1USrOAI0Nr0QYF3+/3
 github.com/googleapis/gax-go/v2 v2.14.2/go.mod h1:ON64QhlJkhVtSqp4v1uaK92VyZ2gmvDQsweuyLV+8+w=
 github.com/johnjones4/alpha-sign-communications-protocol v0.0.0-20250618013339-0bfd3daf62ac h1:40DA+iLfVLCTzOnvpUHXC/0uo5ib5sGMeYDkWHXCA90=
 github.com/johnjones4/alpha-sign-communications-protocol v0.0.0-20250618013339-0bfd3daf62ac/go.mod h1:7Qr9c3/bJoYVaLBEBbJMA8dWUSVShDbWC0Gz7SfZr4o=
+github.com/johnjones4/alpha-sign-communications-protocol v0.0.0-20250618172837-99905b7cd068 h1:mYFJnJb3ozTStl2pX3vpPFFKyPLr6ujVt00mrEph7y0=
+github.com/johnjones4/alpha-sign-communications-protocol v0.0.0-20250618172837-99905b7cd068/go.mod h1:7Qr9c3/bJoYVaLBEBbJMA8dWUSVShDbWC0Gz7SfZr4o=
 github.com/juju/gnuflag v0.0.0-20171113085948-2ce1bb71843d/go.mod h1:2PavIy+JPciBPrBUjwbNvtwB6RQlve+hkpll6QSNmOE=
 github.com/oapi-codegen/runtime v1.1.1 h1:EXLHh0DXIJnWhdRPN2w4MXAzFyE4CskzhNLUmtpMYro=
 github.com/oapi-codegen/runtime v1.1.1/go.mod h1:SK9X900oXmPWilYR5/WKPzt3Kqxn/uS/+lbpREv+eCg=

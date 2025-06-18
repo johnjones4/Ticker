@@ -2,31 +2,79 @@ package output
 
 import (
 	"context"
+	"fmt"
+	"log/slog"
 	"main/ticker/core"
+	"strings"
 
 	alphasign "github.com/johnjones4/alpha-sign-communications-protocol"
 )
 
 type LedSign struct {
 	sign *alphasign.Sign
+	log  *slog.Logger
 }
 
-func (o *LedSign) Init(ctx context.Context, cfg *core.Configuration) error {
+var (
+	textFileLabel   alphasign.FileLabel = 'A'
+	stringFileLabel alphasign.FileLabel = '1'
+)
+
+func (o *LedSign) Init(ctx context.Context, log *slog.Logger, cfg *core.Configuration) error {
+	o.log = log
 	sign, err := alphasign.New(alphasign.SignAddressBroadcast, alphasign.AllSigns, *cfg.SerialDevice, 9600)
 	if err != nil {
 		return err
 	}
+
+	err = sign.Send(&alphasign.WriteSpecialFunctionCommand{
+		Label: alphasign.ClearOrSetMemoryConfig,
+		Data: []alphasign.Bytes{
+			alphasign.MemoryConfiguration{
+				FileLabel:                textFileLabel,
+				FileType:                 alphasign.TextFile,
+				KeyboardProtectionStatus: 'U',
+				FileSize:                 alphasign.FileSize(1024),
+			},
+			alphasign.MemoryConfiguration{
+				FileLabel:                stringFileLabel,
+				FileType:                 alphasign.StringFile,
+				KeyboardProtectionStatus: 'L',
+				FileSize:                 alphasign.FileSize(1024),
+			},
+		},
+	})
+	if err != nil {
+		return err
+	}
+
+	err = sign.Send(alphasign.WriteTextCommand{
+		FileLabel: textFileLabel,
+		Mode: &alphasign.TextMode{
+			DisplayPosition: alphasign.Left,
+			ModeCode:        alphasign.Rotate,
+		},
+		Message: []byte{0x15, 0x1C, 0x31, 0x10, '1'},
+	})
+	if err != nil {
+		return err
+	}
+
 	o.sign = sign
 	return nil
 }
 
-func (o *LedSign) Display(ctx context.Context, msg string) error {
-	return o.sign.Send(alphasign.WriteTextCommand{
-		FileLabel: 'A',
-		Mode: &alphasign.TextMode{
-			DisplayPosition: alphasign.Fill,
-			ModeCode:        alphasign.Hold,
-		},
-		Message: []byte(msg),
+func (o *LedSign) Update(ctx context.Context, msgs map[string][]string) error {
+	strs := make([]string, 0, len(msgs))
+
+	for label, msgs1 := range msgs {
+		strs = append(strs, fmt.Sprintf("%s: %s", label, strings.Join(msgs1, ", ")))
+	}
+
+	msg := strings.Join(strs, " | ")
+
+	return o.sign.Send(alphasign.WriteStringCommand{
+		FileLabel: stringFileLabel,
+		FileData:  []byte(msg),
 	})
 }

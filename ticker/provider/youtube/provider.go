@@ -3,6 +3,7 @@ package youtube
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"main/ticker/core"
 
 	"golang.org/x/oauth2/google"
@@ -13,9 +14,15 @@ import (
 type YouTube struct {
 	service   *youtube.Service
 	channelId string
+	log       *slog.Logger
 }
 
-func (p *YouTube) Init(ctx context.Context, cfg *core.Configuration) error {
+func (p *YouTube) Name() string {
+	return "YouTube Channel"
+}
+
+func (p *YouTube) Init(ctx context.Context, log *slog.Logger, cfg *core.Configuration) error {
+	p.log = log
 	p.channelId = cfg.YoutubeChannelId
 	config, err := google.JWTConfigFromJSON(cfg.GoogleConfig, youtube.YoutubeReadonlyScope)
 	if err != nil {
@@ -31,6 +38,7 @@ func (p *YouTube) Init(ctx context.Context, cfg *core.Configuration) error {
 }
 
 func (p *YouTube) Update(ctx context.Context) ([]string, error) {
+	p.log.Info("Updating YouTube stats")
 	res, err := p.service.Channels.List([]string{"statistics"}).Id(p.channelId).Do()
 	if err != nil {
 		return nil, err
@@ -39,7 +47,7 @@ func (p *YouTube) Update(ctx context.Context) ([]string, error) {
 		return nil, nil
 	}
 	return []string{
-		fmt.Sprintf("YT Views: %s", core.FormatUintWithCommas(res.Items[0].Statistics.ViewCount)),
-		fmt.Sprintf("YT Subscribers: %s", core.FormatUintWithCommas(res.Items[0].Statistics.SubscriberCount)),
+		fmt.Sprintf("Views: %s", core.FormatUintWithCommas(res.Items[0].Statistics.ViewCount)),
+		fmt.Sprintf("Subscribers: %s", core.FormatUintWithCommas(res.Items[0].Statistics.SubscriberCount)),
 	}, nil
 }

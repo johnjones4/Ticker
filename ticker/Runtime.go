@@ -2,6 +2,7 @@ package ticker
 
 import (
 	"context"
+	"log/slog"
 	"main/ticker/core"
 	"main/ticker/output"
 	"sync"
@@ -11,14 +12,15 @@ import (
 type Runtime struct {
 	ConfigurationPath string
 	Providers         []core.Provider
+	Log               *slog.Logger
 
-	messages      chan []string
+	messages      chan map[string][]string
 	configuration *core.Configuration
 	output        core.Output
 }
 
 func (r *Runtime) Init(ctx context.Context) error {
-	r.messages = make(chan []string, 128)
+	r.messages = make(chan map[string][]string, 128)
 
 	r.configuration = &core.Configuration{}
 	err := r.configuration.Load(r.ConfigurationPath)
@@ -39,7 +41,7 @@ func (r *Runtime) Init(ctx context.Context) error {
 	inits = append(inits, r.output)
 
 	for _, i := range inits {
-		err := i.Init(ctx, r.configuration)
+		err := i.Init(ctx, r.Log, r.configuration)
 		if err != nil {
 			return err
 		}
@@ -55,36 +57,23 @@ func (r *Runtime) Start(ctx context.Context) error {
 
 	wg.Add(1)
 	go func() {
-		var currentMessages []string = []string{"Loading ..."}
-		currentMessageIndex := 0
-		displayTick := time.Tick(time.Second * 10)
-		display := func() {
-			if len(currentMessages) == 0 {
-				return
-			}
-			err := r.output.Display(cancelableCtx, currentMessages[currentMessageIndex%len(currentMessages)])
-			if err != nil {
-				cancel(err)
-				return
-			}
-			currentMessageIndex++
-		}
-		display()
 		for {
 			select {
 			case <-cancelableCtx.Done():
 				wg.Done()
 				return
 			case msgs := <-r.messages:
-				currentMessages = msgs
-			case <-displayTick:
-				display()
+				err := r.output.Update(cancelableCtx, msgs)
+				if err != nil {
+					cancel(err)
+					continue
+				}
 			}
 		}
 	}()
 
 	update := time.Tick(time.Second)
-	allMessages := make([][]string, len(r.Providers))
+	allMessages := make(map[string][]string)
 	for {
 		select {
 		case <-cancelableCtx.Done():
@@ -92,21 +81,23 @@ func (r *Runtime) Start(ctx context.Context) error {
 			return cancelableCtx.Err()
 		case <-update:
 			hasUpdates := false
-			for i, provider := range r.Providers {
+			for _, provider := range r.Providers {
 				messages, err := provider.Update(cancelableCtx)
 				if err != nil {
 					cancel(err)
 					continue
 				}
 				if messages != nil {
-					allMessages[i] = messages
+					allMessages[provider.Name()] = messages
 					hasUpdates = true
 				}
 			}
 			if hasUpdates {
-				out := make([]string, 0, len(r.Providers))
-				for _, messages := range allMessages {
-					out = append(out, messages...)
+				r.Log.Info("Updated messages available")
+				out := make(map[string][]string)
+				for key, messages := range allMessages {
+					out[key] = make([]string, len(messages))
+					copy(out[key], messages)
 				}
 				r.messages <- out
 			}
