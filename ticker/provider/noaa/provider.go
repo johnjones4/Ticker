@@ -41,7 +41,7 @@ func (p *NOAA) Update(ctx context.Context) ([]string, error) {
 	out := make([]string, 0)
 
 	if res.ApplicationgeoJSON200.Properties.Temperature != nil && res.ApplicationgeoJSON200.Properties.Temperature.Value != nil {
-		out = append(out, fmt.Sprintf("Temp: %0.1f°", celsiusToFahrenheit(*res.ApplicationgeoJSON200.Properties.Temperature.Value)))
+		out = append(out, fmt.Sprintf("Temp: %0.1fF", celsiusToFahrenheit(*res.ApplicationgeoJSON200.Properties.Temperature.Value)))
 	}
 
 	if res.ApplicationgeoJSON200.Properties.WindSpeed != nil && res.ApplicationgeoJSON200.Properties.WindSpeed.Value != nil {
@@ -49,7 +49,7 @@ func (p *NOAA) Update(ctx context.Context) ([]string, error) {
 	}
 
 	if res.ApplicationgeoJSON200.Properties.Dewpoint != nil && res.ApplicationgeoJSON200.Properties.Dewpoint.Value != nil {
-		out = append(out, fmt.Sprintf("Dewpoint: %0.1f°", celsiusToFahrenheit(*res.ApplicationgeoJSON200.Properties.Dewpoint.Value)))
+		out = append(out, fmt.Sprintf("Dewpoint: %0.1fF", celsiusToFahrenheit(*res.ApplicationgeoJSON200.Properties.Dewpoint.Value)))
 	}
 
 	if res.ApplicationgeoJSON200.Properties.BarometricPressure != nil && res.ApplicationgeoJSON200.Properties.BarometricPressure.Value != nil {

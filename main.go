@@ -9,6 +9,7 @@ import (
 	"main/ticker/provider/noaa"
 	"main/ticker/provider/yahoofinance"
 	"main/ticker/provider/youtube"
+	"os"
 	"time"
 )
 
@@ -17,7 +18,7 @@ func main() {
 
 	rt := ticker.Runtime{
 		Log:               log,
-		ConfigurationPath: "./config.json",
+		ConfigurationPath: os.Getenv("CONFIG_FILE"),
 		Providers: []core.Provider{
 			&core.IntervalProvider{
 				Parent:         &noaa.NOAA{},
