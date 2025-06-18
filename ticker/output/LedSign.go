@@ -72,6 +72,7 @@ func (o *LedSign) Update(ctx context.Context, msgs map[string][]string) error {
 	}
 
 	msg := strings.Join(strs, " | ")
+	o.log.Info("message", slog.Int("size", len([]byte(msg))), slog.String("message", msg))
 
 	return o.sign.Send(alphasign.WriteStringCommand{
 		FileLabel: stringFileLabel,
