@@ -22,7 +22,7 @@ const (
 	textFileLabel        alphasign.FileLabel = 'A'
 	stringFileLabelStart alphasign.FileLabel = 0x31
 
-	stringFileWidth = 125
+	stringFileWidth = 100
 	nStringFiles    = 4
 )
 
@@ -47,11 +47,11 @@ func (o *LedSign) Init(ctx context.Context, log *slog.Logger, cfg *core.Configur
 	for i := range nStringFiles {
 		filename := stringFileLabelStart + alphasign.FileLabel(i)
 		o.log.Info("creating string file", slog.String("filename", fmt.Sprint(filename)))
-		displayString = append(displayString, 0x10, byte(filename))
+		displayString = append(displayString, []byte{0x10, byte(filename)}...)
 		configs = append(configs, alphasign.MemoryConfiguration{
 			FileLabel:                filename,
 			FileType:                 alphasign.StringFile,
-			KeyboardProtectionStatus: 'U',
+			KeyboardProtectionStatus: 'L',
 			FileSize:                 alphasign.FileSize(stringFileWidth),
 		})
 	}
