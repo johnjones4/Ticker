@@ -23,7 +23,7 @@ const (
 	stringFileLabelStart alphasign.FileLabel = 0x32
 
 	stringFileWidth = 125
-	nStringFiles    = 4
+	nStringFiles    = 1
 )
 
 func (o *LedSign) Init(ctx context.Context, log *slog.Logger, cfg *core.Configuration) error {
