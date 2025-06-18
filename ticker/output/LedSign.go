@@ -23,7 +23,7 @@ const (
 	stringFileLabelStart alphasign.FileLabel = 0x32
 
 	stringFileWidth = 125
-	nStringFiles    = (2048 / stringFileWidth) + 1
+	nStringFiles    = 4
 )
 
 func (o *LedSign) Init(ctx context.Context, log *slog.Logger, cfg *core.Configuration) error {
@@ -70,7 +70,7 @@ func (o *LedSign) Init(ctx context.Context, log *slog.Logger, cfg *core.Configur
 			DisplayPosition: alphasign.Left,
 			ModeCode:        alphasign.Rotate,
 		},
-		Message: []byte("Loading 123 ..."),
+		Message: displayString,
 	})
 	if err != nil {
 		return err
