@@ -72,7 +72,14 @@ func (o *LedSign) Init(ctx context.Context, log *slog.Logger, cfg *core.Configur
 		},
 		Message: displayString,
 	})
+	if err != nil {
+		return err
+	}
 
+	err = o.sign.Send(alphasign.WriteStringCommand{
+		FileLabel: stringFileLabelStart,
+		FileData:  []byte("Loading ..."),
+	})
 	if err != nil {
 		return err
 	}
@@ -86,6 +93,7 @@ func (o *LedSign) PrepareSegments(ctx context.Context, segs []string) error {
 }
 
 func (o *LedSign) Update(ctx context.Context, msgs map[string][]string) error {
+	//TODO use ordered segments
 	strs := make([]string, 0, len(msgs))
 
 	for label, msgs1 := range msgs {
