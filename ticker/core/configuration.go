@@ -6,9 +6,13 @@ import (
 )
 
 type Configuration struct {
-	MarketSymbols []string `json:"marketSymbols"`
-	CryptoCoins   []string `json:"cryptoCoins"`
-	CurrencyCode  string   `json:"currencyCode"`
+	MarketSymbols    []string        `json:"marketSymbols"`
+	CryptoCoins      []string        `json:"cryptoCoins"`
+	CurrencyCode     string          `json:"currencyCode"`
+	GoogleConfig     json.RawMessage `json:"googleConfig"`
+	YoutubeChannelId string          `json:"youtubeChannelId"`
+	NoaaStationId    string          `json:"noaaStationId"`
+	SerialDevice     *string         `json:"serialDevice"`
 }
 
 func (cfg *Configuration) Load(path string) error {

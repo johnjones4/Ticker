@@ -4,9 +4,10 @@ import (
 	"context"
 	"main/ticker"
 	"main/ticker/core"
-	"main/ticker/output"
 	"main/ticker/provider/coingecko"
+	"main/ticker/provider/noaa"
 	"main/ticker/provider/yahoofinance"
+	"main/ticker/provider/youtube"
 	"time"
 )
 
@@ -14,6 +15,14 @@ func main() {
 	rt := ticker.Runtime{
 		ConfigurationPath: "./config.json",
 		Providers: []core.Provider{
+			&core.IntervalProvider{
+				Parent:         &noaa.NOAA{},
+				UpdateInterval: time.Minute,
+			},
+			&core.IntervalProvider{
+				Parent:         &youtube.YouTube{},
+				UpdateInterval: time.Hour,
+			},
 			&core.IntervalProvider{
 				Parent:         &yahoofinance.YahooFinance{},
 				UpdateInterval: time.Minute * 2,
@@ -23,7 +32,6 @@ func main() {
 				UpdateInterval: time.Minute * 2,
 			},
 		},
-		Output: &output.LogOutput{},
 	}
 
 	ctx := context.Background()

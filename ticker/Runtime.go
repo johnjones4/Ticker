@@ -3,6 +3,7 @@ package ticker
 import (
 	"context"
 	"main/ticker/core"
+	"main/ticker/output"
 	"sync"
 	"time"
 )
@@ -10,10 +11,10 @@ import (
 type Runtime struct {
 	ConfigurationPath string
 	Providers         []core.Provider
-	Output            core.Output
 
 	messages      chan []string
 	configuration *core.Configuration
+	output        core.Output
 }
 
 func (r *Runtime) Init(ctx context.Context) error {
@@ -25,11 +26,17 @@ func (r *Runtime) Init(ctx context.Context) error {
 		return err
 	}
 
+	if r.configuration.SerialDevice != nil {
+		r.output = &output.LedSign{}
+	} else {
+		r.output = &output.LogOutput{}
+	}
+
 	inits := make([]core.Init, 0)
 	for _, p := range r.Providers {
 		inits = append(inits, p)
 	}
-	inits = append(inits, r.Output)
+	inits = append(inits, r.output)
 
 	for _, i := range inits {
 		err := i.Init(ctx, r.configuration)
@@ -50,12 +57,12 @@ func (r *Runtime) Start(ctx context.Context) error {
 	go func() {
 		var currentMessages []string = []string{"Loading ..."}
 		currentMessageIndex := 0
-		displayTick := time.Tick(time.Second * 30)
+		displayTick := time.Tick(time.Second * 10)
 		display := func() {
 			if len(currentMessages) == 0 {
 				return
 			}
-			err := r.Output.Display(cancelableCtx, currentMessages[currentMessageIndex%len(currentMessages)])
+			err := r.output.Display(cancelableCtx, currentMessages[currentMessageIndex%len(currentMessages)])
 			if err != nil {
 				cancel(err)
 				return
