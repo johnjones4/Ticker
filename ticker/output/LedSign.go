@@ -76,14 +76,6 @@ func (o *LedSign) Init(ctx context.Context, log *slog.Logger, cfg *core.Configur
 		return err
 	}
 
-	err = o.sign.Send(alphasign.WriteStringCommand{
-		FileLabel: stringFileLabelStart,
-		FileData:  []byte("Loading ..."),
-	})
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -124,8 +116,10 @@ func (o *LedSign) Update(ctx context.Context, msgs map[string][]string) error {
 
 	if n < nStringFiles {
 		for i := range nStringFiles - n {
+			filename := stringFileLabelStart + alphasign.FileLabel(n+i)
+			o.log.Info("clearing file", slog.String("filename", fmt.Sprint(filename)))
 			err := o.sign.Send(alphasign.WriteStringCommand{
-				FileLabel: stringFileLabelStart + alphasign.FileLabel(n+i),
+				FileLabel: filename,
 				FileData:  []byte{},
 			})
 			if err != nil {

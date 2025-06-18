@@ -6,7 +6,6 @@ import (
 	"main/ticker/core"
 	"main/ticker/output"
 	"sync"
-	"time"
 )
 
 type Runtime struct {
@@ -79,14 +78,13 @@ func (r *Runtime) Start(ctx context.Context) error {
 		}
 	}()
 
-	update := time.Tick(time.Second * 10)
 	allMessages := make(map[string][]string)
 	for {
 		select {
 		case <-cancelableCtx.Done():
 			wg.Wait()
 			return cancelableCtx.Err()
-		case <-update:
+		default:
 			hasUpdates := false
 			for _, provider := range r.Providers {
 				messages, err := provider.Update(cancelableCtx)
