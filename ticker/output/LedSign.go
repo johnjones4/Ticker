@@ -34,13 +34,13 @@ func (o *LedSign) Init(ctx context.Context, log *slog.Logger, cfg *core.Configur
 				FileLabel:                textFileLabel,
 				FileType:                 alphasign.TextFile,
 				KeyboardProtectionStatus: 'U',
-				FileSize:                 alphasign.FileSize(1024),
+				FileSize:                 alphasign.FileSize(128),
 			},
 			alphasign.MemoryConfiguration{
 				FileLabel:                stringFileLabel,
 				FileType:                 alphasign.StringFile,
 				KeyboardProtectionStatus: 'L',
-				FileSize:                 alphasign.FileSize(1024),
+				FileSize:                 alphasign.FileSize(2048),
 			},
 		},
 	})
@@ -68,6 +68,9 @@ func (o *LedSign) Update(ctx context.Context, msgs map[string][]string) error {
 	strs := make([]string, 0, len(msgs))
 
 	for label, msgs1 := range msgs {
+		if len(msgs1) == 0 {
+			continue
+		}
 		strs = append(strs, fmt.Sprintf("%s: %s", label, strings.Join(msgs1, ", ")))
 	}
 
