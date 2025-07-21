@@ -18,7 +18,7 @@ type YouTube struct {
 }
 
 func (p *YouTube) Name() string {
-	return "YouTube Channel"
+	return "YouTube"
 }
 
 func (p *YouTube) Init(ctx context.Context, log *slog.Logger, cfg *core.Configuration) error {

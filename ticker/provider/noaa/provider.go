@@ -25,7 +25,7 @@ func (p *NOAA) Init(ctx context.Context, log *slog.Logger, cfg *core.Configurati
 }
 
 func (p *NOAA) Name() string {
-	return "Natnl Weather Svc"
+	return "Natnl Wthr Svc"
 }
 
 func (p *NOAA) Update(ctx context.Context) ([]string, error) {
@@ -41,23 +41,23 @@ func (p *NOAA) Update(ctx context.Context) ([]string, error) {
 	out := make([]string, 0)
 
 	if res.ApplicationgeoJSON200.Properties.Temperature != nil && res.ApplicationgeoJSON200.Properties.Temperature.Value != nil {
-		out = append(out, fmt.Sprintf("Temperature: %0.1fF", celsiusToFahrenheit(*res.ApplicationgeoJSON200.Properties.Temperature.Value)))
+		out = append(out, fmt.Sprintf("Temp: %0.1fF", celsiusToFahrenheit(*res.ApplicationgeoJSON200.Properties.Temperature.Value)))
 	}
 
 	if res.ApplicationgeoJSON200.Properties.WindSpeed != nil && res.ApplicationgeoJSON200.Properties.WindSpeed.Value != nil {
-		out = append(out, fmt.Sprintf("Wind Speed:  %0.1fmph", kmToMiles(*res.ApplicationgeoJSON200.Properties.WindSpeed.Value)))
+		out = append(out, fmt.Sprintf("Wind:  %0.1fmph", kmToMiles(*res.ApplicationgeoJSON200.Properties.WindSpeed.Value)))
 	}
 
 	if res.ApplicationgeoJSON200.Properties.Dewpoint != nil && res.ApplicationgeoJSON200.Properties.Dewpoint.Value != nil {
-		out = append(out, fmt.Sprintf("Dewpoint: %0.1fF", celsiusToFahrenheit(*res.ApplicationgeoJSON200.Properties.Dewpoint.Value)))
+		out = append(out, fmt.Sprintf("Dewpt: %0.1fF", celsiusToFahrenheit(*res.ApplicationgeoJSON200.Properties.Dewpoint.Value)))
 	}
 
 	if res.ApplicationgeoJSON200.Properties.BarometricPressure != nil && res.ApplicationgeoJSON200.Properties.BarometricPressure.Value != nil {
-		out = append(out, fmt.Sprintf("Pressure: %0.1finHg", millibarsToInHg(*res.ApplicationgeoJSON200.Properties.BarometricPressure.Value)))
+		out = append(out, fmt.Sprintf("Press: %0.1finHg", millibarsToInHg(*res.ApplicationgeoJSON200.Properties.BarometricPressure.Value)))
 	}
 
 	if res.ApplicationgeoJSON200.Properties.RelativeHumidity != nil && res.ApplicationgeoJSON200.Properties.RelativeHumidity.Value != nil {
-		out = append(out, fmt.Sprintf("Humidity: %0.0f%%", *res.ApplicationgeoJSON200.Properties.RelativeHumidity.Value))
+		out = append(out, fmt.Sprintf("Hmidty: %0.0f%%", *res.ApplicationgeoJSON200.Properties.RelativeHumidity.Value))
 	}
 
 	return out, nil

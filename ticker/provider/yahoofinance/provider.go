@@ -50,7 +50,7 @@ func (p *YahooFinance) Update(ctx context.Context) ([]string, error) {
 			continue
 		}
 
-		name := *(*res.JSON200.Chart.Result)[0].Meta.ShortName
+		name := *(*res.JSON200.Chart.Result)[0].Meta.Symbol
 		prevClose := *(*res.JSON200.Chart.Result)[0].Meta.PreviousClose
 		current := *(*res.JSON200.Chart.Result)[0].Meta.RegularMarketPrice
 		pcnt := ((current - prevClose) / prevClose) * 100

@@ -80,7 +80,7 @@ func (p *CoinGecko) loadCoinNames(ctx context.Context) error {
 	}
 	p.coinNameMap = make(map[string]string)
 	for _, coin := range *res.JSON200 {
-		p.coinNameMap[*coin.Id] = *coin.Name
+		p.coinNameMap[*coin.Id] = *coin.Symbol
 	}
 	return nil
 }
